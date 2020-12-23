@@ -1,0 +1,37 @@
+<template>
+  <div>
+    <el-form-item label="主机地址" prop="host">
+      <el-input placeholder="请输入主机地址，例如127.0.0.1" v-model="formData.host"></el-input>
+    </el-form-item>
+    <el-form-item label="端口号" prop="port">
+      <el-input type="number" v-model="formData.port"></el-input>
+    </el-form-item>
+    <el-form-item label="用户名" prop="user">
+      <el-input placeholder="请输入用户名，例如root" v-model="formData.username"></el-input>
+    </el-form-item>
+    <el-form-item label="密码" prop="password">
+      <el-input show-password v-model="formData.password" placeholder="请输入密码"
+                autocomplete="new-password"></el-input>
+    </el-form-item>
+  </div>
+</template>
+
+<script>
+export default {
+  name: "MySqlForm",
+  data(){
+    return{
+      formData:{
+        host:null,
+        port:3066,
+        username:null,
+        password:null
+      }
+    }
+  }
+}
+</script>
+
+<style scoped>
+
+</style>

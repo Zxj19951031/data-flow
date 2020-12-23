@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.example.job.mapper.DatasourceMapper">
+
+    <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultType="org.example.job.model.Datasource">
+        select id,
+               name,
+               type,
+               host,
+               port,
+               username,
+               password,
+               create_time,
+               update_time,
+               status
+        from tb_datasource
+        where id = #{id,jdbcType=INTEGER}
+          and status = 0
+    </select>
+    <select id="select" resultType="org.example.job.model.Datasource">
+        select id,name,type,host,port,username,password,create_time,update_time,status
+        from tb_datasource
+        where status = 0
+        <if test="params.name !=null and params.name != ''">
+            and name like concat('%',#{params.name},'%')
+        </if>
+        <if test="params.type != null">
+            and type = #{params.type}
+        </if>
+    </select>
+    <update id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+        update tb_datasource
+        set status = 1
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+    <insert id="insert" keyColumn="id" keyProperty="id" parameterType="org.example.job.model.Datasource"
+            useGeneratedKeys="true">
+        insert into tb_datasource (`name`, `type`, `host`, port, username, `password`)
+        values (#{name,jdbcType=VARCHAR}, #{type,jdbcType=INTEGER}, #{host,jdbcType=VARCHAR},
+                #{port,jdbcType=INTEGER}, #{username,jdbcType=VARCHAR}, #{password,jdbcType=VARCHAR})
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="org.example.job.model.Datasource">
+        update tb_datasource
+        <set>
+            <if test="name != null">
+                `name` = #{name,jdbcType=VARCHAR},
+            </if>
+            <if test="type != null">
+                `type` = #{type,jdbcType=INTEGER},
+            </if>
+            <if test="host != null">
+                `host` = #{host,jdbcType=VARCHAR},
+            </if>
+            <if test="port != null">
+                port = #{port,jdbcType=INTEGER},
+            </if>
+            <if test="username != null">
+                username = #{username,jdbcType=VARCHAR},
+            </if>
+            <if test="password != null">
+                `password` = #{password,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+</mapper>

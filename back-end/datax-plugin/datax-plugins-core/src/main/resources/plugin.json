@@ -1,0 +1,22 @@
+{
+  "reader": {
+    "mysqlreader": {
+      "path": "plugin/reader/mysqlreader",
+      "class": "org.example.plugins.mysqlreader.MysqlReader"
+    },
+    "oraclereader": {
+      "path": "plugin/reader/oraclereader",
+      "class": "org.example.plugins.oraclereader.OracleReader"
+    }
+  },
+  "writer": {
+    "mysqlwriter": {
+      "path": "plugin/writer/mysqlwriter",
+      "class": "org.example.plugins.mysqlwriter.MysqlWriter"
+    },
+    "oraclewriter": {
+      "path": "plugin/writer/oraclewriter",
+      "class": "org.example.plugins.oraclewriter.OracleWriter"
+    }
+  }
+}

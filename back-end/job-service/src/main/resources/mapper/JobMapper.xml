@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.example.job.mapper.JobMapper">
+
+    <sql id="Base_Column_List">
+        id, `name`, from_datasource, to_datasource, plugin_config, cron, create_time, update_time, `status`
+    </sql>
+    <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultType="org.example.job.model.Job">
+        select
+        <include refid="Base_Column_List"/>
+        from tb_job
+        where id = #{id,jdbcType=INTEGER}
+    </select>
+    <update id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+        update tb_job
+        set status = 1
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+    <insert id="insert" keyColumn="id" keyProperty="id" parameterType="org.example.job.model.Job"
+            useGeneratedKeys="true">
+        insert into tb_job (`name`, from_datasource, to_datasource, plugin_config, cron)
+        values (#{name,jdbcType=VARCHAR}, #{fromDatasource,jdbcType=INTEGER}, #{toDatasource,jdbcType=INTEGER},
+                #{pluginConfig,jdbcType=VARCHAR}, #{cron,jdbcType=INTEGER})
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="org.example.job.model.Job">
+        update tb_job
+        <set>
+            <if test="name != null">
+                `name` = #{name,jdbcType=VARCHAR},
+            </if>
+            <if test="fromDatasource != null">
+                from_datasource = #{fromDatasource,jdbcType=INTEGER},
+            </if>
+            <if test="toDatasource != null">
+                to_datasource = #{toDatasource,jdbcType=INTEGER},
+            </if>
+            <if test="pluginConfig != null">
+                plugin_config = #{pluginConfig,jdbcType=VARCHAR},
+            </if>
+            <if test="cron != null">
+                cron = #{cron,jdbcType=INTEGER},
+            </if>
+        </set>
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+</mapper>

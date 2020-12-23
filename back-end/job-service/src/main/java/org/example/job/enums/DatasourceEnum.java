@@ -28,6 +28,7 @@ public enum DatasourceEnum {
                 return i;
             }
         }
-        return null;
+        log.error("枚举类型异常,value={}", value);
+        throw SystemException.newException(SystemError.ENUM_ERROR);
     }
 }

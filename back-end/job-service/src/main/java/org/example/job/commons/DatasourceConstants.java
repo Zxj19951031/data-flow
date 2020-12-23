@@ -1,4 +1,4 @@
-package org.example.job;
+package org.example.job.commons;
 
 /**
  * @author zhuxj

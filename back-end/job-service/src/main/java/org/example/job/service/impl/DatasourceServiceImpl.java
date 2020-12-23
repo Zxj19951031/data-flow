@@ -1,7 +1,7 @@
 package org.example.job.service.impl;
 
 import lombok.extern.slf4j.Slf4j;
-import org.example.job.DatasourceConstants;
+import org.example.job.commons.DatasourceConstants;
 import org.example.job.dto.DatasourceQueryDTO;
 import org.example.job.enums.DatasourceEnum;
 import org.example.job.mapper.DatasourceMapper;
@@ -27,7 +27,6 @@ public class DatasourceServiceImpl implements DatasourceService {
     @Override
     public int save(Datasource datasource) {
         Assert.notNull(datasource, "数据源对象不可空");
-        Assert.notNull(DatasourceEnum.getByValue(datasource.getType()), "错误的枚举类型");
 
         DatasourceEnum type = DatasourceEnum.getByValue(datasource.getType());
         if (DatasourceEnum.MYSQL.equals(type)) {

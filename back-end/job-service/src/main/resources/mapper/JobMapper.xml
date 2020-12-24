@@ -3,13 +3,25 @@
 <mapper namespace="org.example.job.mapper.JobMapper">
 
     <sql id="Base_Column_List">
-        id, `name`, from_datasource, to_datasource, plugin_config, cron, create_time, update_time, `status`
+        id, `name`, from_datasource, to_datasource, plugin_config, cron, schedule_status, create_time, update_time, `status`
     </sql>
     <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultType="org.example.job.model.Job">
         select
         <include refid="Base_Column_List"/>
         from tb_job
         where id = #{id,jdbcType=INTEGER}
+    </select>
+    <select id="select" resultType="org.example.job.model.Job">
+        select
+        <include refid="Base_Column_List"/>
+        from tb_job where status = 0
+        <if test="params.name!=null and name!=''">
+            and name like concat('%',#{params.name},'%')
+        </if>
+        <if test="params.scheduleStatus!=null">
+            and schedule_status = #{params.scheduleStatus}
+        </if>
+        order by create_time desc
     </select>
     <update id="deleteByPrimaryKey" parameterType="java.lang.Integer">
         update tb_job

@@ -45,7 +45,7 @@ public class DatasourceServiceImpl implements DatasourceService {
     @Override
     public Datasource findById(Integer id) {
         Datasource datasource = this.datasourceMapper.selectByPrimaryKey(id);
-        log.info("查询完成，id={}，record={}", id, datasource);
+        log.info("查询完成\nid={},record={}", id, datasource);
         return datasource;
     }
 

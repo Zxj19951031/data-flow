@@ -19,14 +19,22 @@
 <script>
 export default {
   name: "MySqlForm",
-  data(){
-    return{
-      formData:{
-        host:null,
-        port:3066,
-        username:null,
-        password:null
+  data() {
+    return {
+      formData: {
+        host: null,
+        port: 3066,
+        username: null,
+        password: null
       }
+    }
+  },
+  methods: {
+    handleFormData(data){
+      this.formData.host = data.host;
+      this.formData.port = data.port;
+      this.formData.username = data.username;
+      this.formData.password = data.password;
     }
   }
 }

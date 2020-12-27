@@ -37,6 +37,9 @@ instance.interceptors.response.use(
                 case 401:
                     handleAuthenticationError()
                     break;
+                case 502:
+                    handle502()
+                    break;
                 default:
                     handleError(res)
             }
@@ -44,6 +47,13 @@ instance.interceptors.response.use(
         return Promise.reject(err)
     }
 );
+
+function handle502() {
+    context.$message({
+        message: '服务器内部错误',
+        type: 'error'
+    });
+}
 
 //认证错误处理  清除token信息并跳转到登录页面
 function handleAuthenticationError() {

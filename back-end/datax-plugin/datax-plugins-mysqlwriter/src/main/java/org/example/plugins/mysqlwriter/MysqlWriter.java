@@ -1,17 +1,17 @@
 package org.example.plugins.mysqlwriter;
 
 import org.apache.commons.lang3.tuple.Triple;
+import org.example.plugins.common.Writer;
+import org.example.plugins.common.columns.Column;
 import org.example.plugins.common.commons.JsonObject;
 import org.example.plugins.common.exceptions.CommonError;
 import org.example.plugins.common.exceptions.PluginError;
 import org.example.plugins.common.exceptions.SystemException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.example.plugins.common.Writer;
-import org.example.plugins.common.columns.Column;
 import org.example.plugins.common.records.Record;
 import org.example.plugins.common.records.SkipRecord;
 import org.example.plugins.common.tunnels.RecordConsumer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.sql.*;
 import java.util.ArrayList;

@@ -28,6 +28,31 @@ const GETAWAY_API = {
     getCronTestResult: {
         method: 'GET',
         url: '/ruleApi/cron/test/result'
+    },
+    //新增数据源
+    saveDatasource: {
+        method: 'POST',
+        url: '/jobApi/datasource'
+    },
+    //查询数据源
+    getDatasource: {
+        method: 'GET',
+        url: '/jobApi/datasource/{{id}}'
+    },
+    //删除数据源
+    deleteDatasource: {
+        method: 'DELETE',
+        url: '/jobApi/datasource/{{id}}'
+    },
+    //更新数据源
+    updateDatasource: {
+        method: 'PUT',
+        url: '/jobApi/datasource/{{id}}'
+    },
+    //获取数据源列表
+    getDatasources: {
+        method: 'GET',
+        url: '/jobApi/datasources'
     }
 };
 

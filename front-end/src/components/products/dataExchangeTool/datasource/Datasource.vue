@@ -30,9 +30,8 @@
         <el-table-column prop="name" label="数据源名称" width="300"/>
         <el-table-column prop="typeStr" label="数据源类型">
           <template slot-scope="scope">
-            <img class="database-icon" v-if="scope.row.type===1" src="@/assets/mysql.png" height="20"
-                 width="20"/>
-            <span>{{ scope.row.typeStr }}</span>
+            <img class="database-icon" :src="datasourceType[scope.row.type - 1].src" height="20" width="20"/>
+            <span>{{ datasourceType[scope.row.type - 1].name }}</span>
           </template>
         </el-table-column>
         <el-table-column prop="host" label="主机地址" width="450"/>
@@ -51,6 +50,7 @@
     <!--分页-->
     <el-row type="flex" justify="center">
       <el-pagination :page-sizes="pageParam.pageSizes" :page-size="pageParam.pageSize"
+                     @size-change="handlePageSizeChange" @current-change="handlePageNumChange"
                      layout="total, sizes, prev, pager, next, jumper" :total="pageParam.total"></el-pagination>
     </el-row>
     <!--抽屉-->
@@ -69,14 +69,14 @@
               </el-select>
             </el-form-item>
             <!--mysql 数据源表单-->
-            <MySqlForm v-if="formData.type===1" :ref="searchData.types[formData.type-1].label"></MySqlForm>
+            <MySqlForm v-if="formData.type===1" :ref='searchData.types[formData.type - 1].label'></MySqlForm>
           </el-form>
         </el-main>
         <el-footer>
           <el-row type="flex" justify="end">
             <el-button @click="handleConnectionCheck">测试连通性</el-button>
-            <el-button type="primary" v-if="drawerData.type==='add'">保存新增</el-button>
-            <el-button type="primary" v-if="drawerData.type==='edit'">保存编辑</el-button>
+            <el-button type="primary" v-if="drawerData.type==='add'" @click="handleSave">保存新增</el-button>
+            <el-button type="primary" v-if="drawerData.type==='edit'" @click="handleUpdate">保存编辑</el-button>
           </el-row>
         </el-footer>
       </el-container>
@@ -85,6 +85,7 @@
 </template>
 <script>
 import MySqlForm from "@/components/products/dataExchangeTool/datasource/MySqlForm";
+import MysqlPng from "@/assets/mysql.png";
 
 export default {
   name: "Datasource",
@@ -97,17 +98,11 @@ export default {
         types: [{
           label: "MySql",
           value: 1,
-          icon: "../../assets/mysql.png"
-        }, {
-          label: "Oracle",
-          value: 2,
-        }, {
-          label: "Sql Server",
-          value: 3
         }]
       },
       tableData: [],
       pageParam: {
+        pageNum: 1,
         pageSize: 30,
         pageSizes: [30, 50, 100],
         total: 0,
@@ -121,40 +116,56 @@ export default {
       formData: {
         name: null,
         type: null,
-      }
+      },
+      datasourceType: [
+        {name: 'MySql', src: MysqlPng},
+      ]
     }
   },
   mounted() {
     this.handleTableDataQuery();
   },
   methods: {
+    //处理单页大小变动
+    handlePageSizeChange(pageSize) {
+      this.pageParam.pageSize = pageSize;
+      this.handleTableDataQuery()
+    },
+    //处理页码变动
+    handlePageNumChange(pageNum) {
+      this.pageParam.pageNum = pageNum;
+      this.handleTableDataQuery()
+    },
     //查询列表数据
     handleTableDataQuery() {
-      this.tableData = [{
-        id: 1,
-        name: '测试数据源',
-        type: 1,
-        typeStr: 'MySql',
-        host: '127.0.0.1',
-        createTime: '2020-12-08 00:00:00',
-        updateTime: '2020-12-08 00:00:00'
-      }]
+      let params = {
+        pageNum: this.pageParam.pageNum,
+        pageSize: this.pageParam.pageSize,
+        name: this.searchData.name,
+        type: this.searchData.type
+      }
+      this.$http.getDatasources({params}).then(response => {
+        this.tableData = response.data.list
+        this.pageParam.total = response.data.total
+      })
     },
     //处理列表搜索
     handleSearch() {
-
+      this.handleTableDataQuery();
     },
     //处理列表刷新
     handleRefresh() {
-
+      this.$refs.searchData.resetFields();
+      this.handleTableDataQuery();
     },
     //预处理抽屉打开
     preHandleDrawerOpen(record) {
       this.drawerData.visible = true;
       if (record) {
-        this.drawerData.type = "add";
-      } else {
         this.drawerData.type = "edit";
+        this.handleRecordQuery(record.id)
+      } else {
+        this.drawerData.type = "add";
       }
     },
     //处理删除
@@ -169,6 +180,31 @@ export default {
     handleDrawerClose() {
       //重置data
       this.$refs.drawerForm.resetFields();
+    },
+    //处理保存新增按扭
+    handleSave() {
+      let params = {};
+      Object.assign(params, this.formData);
+      Object.assign(params, this.$refs[this.searchData.types[this.formData.type - 1].label].formData)
+      // eslint-disable-next-line no-unused-vars
+      this.$http.saveDatasource({params}).then(resp => {
+        this.$message.success('新增成功')
+        this.$refs.drawer.closeDrawer();
+      })
+    },
+    //处理保存编辑按扭
+    handleUpdate(){
+
+    },
+    //查询记录
+    handleRecordQuery(id) {
+      let path = {id: id}
+      this.$http.getDatasource({path}).then(resp => {
+        this.formData.name = resp.data.name;
+        this.formData.type = resp.data.type;
+        console.log(this.$refs[this.searchData.types[this.formData.type - 1].label])
+
+      })
     }
   }
 }

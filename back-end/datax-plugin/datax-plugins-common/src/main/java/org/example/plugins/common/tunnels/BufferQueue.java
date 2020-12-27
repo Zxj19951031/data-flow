@@ -1,9 +1,9 @@
 package org.example.plugins.common.tunnels;
 
 import org.example.plugins.common.records.Record;
+import org.example.plugins.common.records.TerminateRecord;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.example.plugins.common.records.TerminateRecord;
 
 import java.util.Collection;
 import java.util.concurrent.ArrayBlockingQueue;

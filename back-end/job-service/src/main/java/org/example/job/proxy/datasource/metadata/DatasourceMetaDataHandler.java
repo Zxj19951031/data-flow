@@ -13,4 +13,6 @@ public interface DatasourceMetaDataHandler {
 
     public List<String> query(Datasource datasource, DatasourceMetadataEnum metadataEnum, String... variables);
 
+    public boolean connection(Datasource datasource);
+
 }

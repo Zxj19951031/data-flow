@@ -53,6 +53,11 @@ const GETAWAY_API = {
     getDatasources: {
         method: 'GET',
         url: '/jobApi/datasources'
+    },
+    //测试数据源
+    testConnection: {
+        method: 'POST',
+        url: '/jobApi/datasource/connectivity'
     }
 };
 

@@ -35,38 +35,27 @@ instance.interceptors.response.use(
         if (res) {
             switch (res.status) {
                 case 401:
-                    handleAuthenticationError()
+                    //认证错误处理  清除token信息并跳转到登录页面
+                    localStorage.clear();
+                    window.location.replace("/#/login")
                     break;
                 case 502:
-                    handle502()
+                    context.$message({
+                        message: '服务器内部错误',
+                        type: 'error'
+                    });
                     break;
                 default:
-                    handleError(res)
+                    context.$message({
+                        message: res.data.message,
+                        type: 'error'
+                    });
             }
         }
         return Promise.reject(err)
     }
 );
 
-function handle502() {
-    context.$message({
-        message: '服务器内部错误',
-        type: 'error'
-    });
-}
-
-//认证错误处理  清除token信息并跳转到登录页面
-function handleAuthenticationError() {
-    localStorage.clear();
-    window.location.replace("/#/login")
-}
-
-function handleError(res) {
-    context.$message({
-        message: res.data.message,
-        type: 'error'
-    });
-}
 
 let context = null;
 
@@ -110,29 +99,20 @@ for (let key in GETAWAY_API) {
             api.method === "POST" ||
             api.method === "PATCH"
         ) {
-            try {
-                response = await instance({
-                    method: api.method,
-                    url: url,
-                    data: newParams
-                });
-                return response;
-
-            } catch (err) {
-                response = err;
-            }
+            response = await instance({
+                method: api.method,
+                url: url,
+                data: newParams
+            });
+            return response;
         } else if (api.method === "DELETE" || api.method === "GET") {
-            try {
-                response = await instance({
-                    method: api.method,
-                    url: url,
-                    params: newParams
-                });
-                return response;
+            response = await instance({
+                method: api.method,
+                url: url,
+                params: newParams
+            });
+            return response;
 
-            } catch (err) {
-                response = err;
-            }
         }
     };
 }

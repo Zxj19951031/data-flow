@@ -69,7 +69,7 @@ public class ControllerAOP {
     @ExceptionHandler(SystemException.class)
     public SystemResponse<?> parameterMissingExceptionHandler(SystemException e) {
         logger.error("服务器内部错误", e);
-        return SystemResponse.error(SystemException.newException(SystemError.SERVER_ERROR, "服务器内部错误"));
+        return SystemResponse.error(e);
     }
 
 

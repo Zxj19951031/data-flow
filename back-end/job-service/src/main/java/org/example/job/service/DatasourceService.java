@@ -46,4 +46,11 @@ public interface DatasourceService {
      * @see DatasourceQueryDTO
      */
     List<Datasource> listByParams(DatasourceQueryDTO params);
+
+    /**
+     * 获取联通性
+     *
+     * @param datasource 数据源内容
+     */
+    boolean connectivity(Datasource datasource);
 }

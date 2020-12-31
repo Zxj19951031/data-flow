@@ -19,7 +19,7 @@
           <el-button icon="el-icon-refresh" size="small" @click="handleRefresh"></el-button>
         </el-form-item>
         <el-form-item style="float: right">
-          <el-button type="primary" @click="preHandleDrawerOpen" icon="el-icon-plus" size="small">新增</el-button>
+          <el-button type="primary" @click="preHandleDrawerOpen(null)" icon="el-icon-plus" size="small">新增</el-button>
         </el-form-item>
       </el-form>
     </el-row>
@@ -28,17 +28,19 @@
       <el-table :data="tableData" style="width: 100%">
         <el-table-column type="index" label="序号"/>
         <el-table-column prop="name" label="数据源名称" width="300"/>
-        <el-table-column prop="typeStr" label="数据源类型">
+        <el-table-column prop="typeStr" label="数据源类型" width="90 ">
           <template slot-scope="scope">
             <img class="database-icon" :src="datasourceType[scope.row.type - 1].src" height="20" width="20"/>
             <span>{{ datasourceType[scope.row.type - 1].name }}</span>
           </template>
         </el-table-column>
-        <el-table-column prop="host" label="主机地址" width="450"/>
+        <el-table-column prop="host" label="主机地址" width="300"/>
         <el-table-column prop="createTime" label="创建时间" width="165"/>
         <el-table-column prop="updateTime" label="修改时间" width="165"/>
         <el-table-column label="操作" align="right">
           <template slot-scope="scope">
+            <el-button type="text" size="small" @click="handleConnectionCheck(scope.row)"><i class="el-icon-link"></i>连通测试
+            </el-button>
             <el-button type="text" size="small" @click="preHandleDrawerOpen(scope.row)"><i class="el-icon-edit"></i>编辑
             </el-button>
             <el-button type="text" size="small" @click="handleDelete(scope.row)"><i class="el-icon-delete"></i>删除
@@ -55,7 +57,7 @@
     </el-row>
     <!--抽屉-->
     <el-drawer :visible.sync="drawerData.visible" :direction="drawerData.direction" :modal="drawerData.model"
-               ref="drawer" @closed="handleDrawerClose">
+               ref="drawer" @closed="handleDrawerClose" @opened="handleDrawerOpened">
       <el-container style="height: 100%">
         <el-main>
           <el-form :model="formData" label-width="100px" style="margin-right: 20px" ref="drawerForm">
@@ -162,18 +164,48 @@ export default {
     preHandleDrawerOpen(record) {
       this.drawerData.visible = true;
       if (record) {
-        this.drawerData.type = "edit";
         this.handleRecordQuery(record.id)
+        this.drawerData.type = "edit";
       } else {
         this.drawerData.type = "add";
       }
     },
+    //处理抽屉打开后的动作 由于抽屉内容为懒加载内容所以对于子组件的赋值操作要等到开启结束
+    handleDrawerOpened() {
+      if (this.formData.type) {
+        this.$refs[this.searchData.types[this.formData.type - 1].label].handleFormData(this.formData)
+      }
+    },
     //处理删除
     handleDelete(record) {
-      console.log(record)
+      let path = {id: record.id}
+      // eslint-disable-next-line no-unused-vars
+      this.$http.deleteDatasource({path}).then(resp => {
+        this.$message.success("删除成功")
+        this.handleTableDataQuery()
+      })
     },
     //处理测试连接
-    handleConnectionCheck() {
+    handleConnectionCheck(row) {
+      let params = {};
+      if (row) {
+        let path = {id: row.id}
+        this.$http.getDatasource({path}).then(resp => {
+          params = resp.data;
+          // eslint-disable-next-line no-unused-vars
+          this.$http.testConnection({params}).then(resp => {
+            this.$message.success('Successfully')
+          })
+        })
+      } else {
+        Object.assign(params, this.formData);
+        Object.assign(params, this.$refs[this.searchData.types[this.formData.type - 1].label].formData)
+        // eslint-disable-next-line no-unused-vars
+        this.$http.testConnection({params}).then(resp => {
+          this.$message.success('Successfully')
+        })
+      }
+
 
     },
     //处理抽屉关闭
@@ -190,20 +222,27 @@ export default {
       this.$http.saveDatasource({params}).then(resp => {
         this.$message.success('新增成功')
         this.$refs.drawer.closeDrawer();
+        this.handleTableDataQuery()
       })
     },
     //处理保存编辑按扭
-    handleUpdate(){
-
+    handleUpdate() {
+      let params = {};
+      Object.assign(params, this.formData);
+      Object.assign(params, this.$refs[this.searchData.types[this.formData.type - 1].label].formData)
+      let path = {id: this.formData.id}
+      // eslint-disable-next-line no-unused-vars
+      this.$http.updateDatasource({params, path}).then(resp => {
+        this.$message.success('编辑成功')
+        this.$refs.drawer.closeDrawer();
+        this.handleTableDataQuery()
+      })
     },
     //查询记录
     handleRecordQuery(id) {
       let path = {id: id}
       this.$http.getDatasource({path}).then(resp => {
-        this.formData.name = resp.data.name;
-        this.formData.type = resp.data.type;
-        console.log(this.$refs[this.searchData.types[this.formData.type - 1].label])
-
+        this.formData = resp.data;
       })
     }
   }

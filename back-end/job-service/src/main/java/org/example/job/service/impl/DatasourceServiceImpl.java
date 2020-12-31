@@ -4,8 +4,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.example.job.commons.DatasourceConstants;
 import org.example.job.dto.DatasourceQueryDTO;
 import org.example.job.enums.DatasourceEnum;
+import org.example.job.exceptions.SystemError;
+import org.example.job.exceptions.SystemException;
 import org.example.job.mapper.DatasourceMapper;
 import org.example.job.model.Datasource;
+import org.example.job.proxy.datasource.metadata.DatasourceMetaDataHandler;
+import org.example.job.proxy.datasource.metadata.MySqlDatasourceMetaDataHandler;
 import org.example.job.service.DatasourceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -67,5 +71,20 @@ public class DatasourceServiceImpl implements DatasourceService {
     public List<Datasource> listByParams(DatasourceQueryDTO params) {
 
         return this.datasourceMapper.select(params);
+    }
+
+    @Override
+    public boolean connectivity(Datasource datasource) {
+        assert datasource != null;
+        DatasourceMetaDataHandler handler;
+        switch (DatasourceEnum.getByValue(datasource.getType())) {
+            case MYSQL:
+                handler = new MySqlDatasourceMetaDataHandler();
+                break;
+            default:
+                log.error("不合法的枚举类型，value={}", datasource.getType());
+                throw SystemException.newException(SystemError.ENUM_ERROR);
+        }
+        return handler.connection(datasource);
     }
 }

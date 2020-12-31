@@ -49,6 +49,34 @@ public class MySqlDatasourceMetaDataHandler implements DatasourceMetaDataHandler
         }
     }
 
+    @Override
+    public boolean connection(Datasource datasource) {
+        Connection connection = null;
+        try {
+            MysqlDataSource dataSource = new MysqlDataSource();
+            dataSource.setServerName(datasource.getHost());
+            dataSource.setPort(datasource.getPort());
+            dataSource.setUser(datasource.getUsername());
+            dataSource.setPassword(datasource.getPassword());
+            dataSource.setConnectTimeout(CONNECT_TIMEOUT_MS);
+
+            connection = dataSource.getConnection();
+            return true;
+        } catch (Exception e) {
+            log.error("数据源连接失败", e);
+            throw SystemException.newException(DatabaseError.CONNECTION_ERROR, e);
+        } finally {
+            if (connection != null) {
+                try {
+                    connection.close();
+                    log.info("关闭 Connection 连接");
+                } catch (SQLException e) {
+                    log.error("关闭 Connection 连接失败", e);
+                }
+            }
+        }
+    }
+
     private List<String> querySchema(String host, Integer port, String username, String password) {
 
         Connection connection = null;

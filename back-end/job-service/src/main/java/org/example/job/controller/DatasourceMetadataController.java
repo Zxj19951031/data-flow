@@ -22,12 +22,25 @@ public class DatasourceMetadataController {
     @Autowired
     private DatasourceMetadataService datasourceMetadataService;
 
+    /**
+     * 查询数据源模式列表
+     *
+     * @param id 数据源编号
+     * @return 数据源模式名称列表
+     */
     @GetMapping(value = "/datasource/{id}/schemas")
     public SystemResponse<List<String>> querySchemas(@PathVariable Integer id) {
         List<String> schemas = this.datasourceMetadataService.querySchemas(id);
         return SystemResponse.success(schemas);
     }
 
+    /**
+     * 查询数据源表信息
+     *
+     * @param id     数据源编号
+     * @param schema 数据源模式名称
+     * @return 数据源表名称列表
+     */
     @GetMapping(value = "/datasource/{id}/tables")
     public SystemResponse<List<String>> queryTables(@PathVariable Integer id,
                                                     @RequestParam String schema) {
@@ -35,6 +48,14 @@ public class DatasourceMetadataController {
         return SystemResponse.success(tables);
     }
 
+    /**
+     * 查询数据源字段列表
+     *
+     * @param id     数据源编号
+     * @param schema 数据源模式名称
+     * @param table  数据源表名称
+     * @return 数据源字段名称列表
+     */
     @GetMapping(value = "/datasource/{id}/columns")
     public SystemResponse<List<String>> queryColumns(@PathVariable Integer id,
                                                      @RequestParam String schema,

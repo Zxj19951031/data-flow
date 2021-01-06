@@ -15,11 +15,11 @@
         select
         <include refid="Base_Column_List"/>
         from tb_job where status = 0
-        <if test="params.name!=null and name!=''">
-            and name like concat('%',#{params.name},'%')
+        <if test="name!=null and name!=''">
+            and name like concat('%',#{name},'%')
         </if>
-        <if test="params.scheduleStatus!=null">
-            and schedule_status = #{params.scheduleStatus}
+        <if test="scheduleStatus!=null">
+            and schedule_status = #{scheduleStatus}
         </if>
         order by create_time desc
     </select>

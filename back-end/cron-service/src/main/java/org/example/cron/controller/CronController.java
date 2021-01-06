@@ -65,7 +65,7 @@ public class CronController {
     public SystemResponse<PageInfo<Cron>> getCrons(@RequestParam Integer pageNum,
                                                    @RequestParam Integer pageSize,
                                                    @RequestParam(required = false) String name) {
-        PageHelper.startPage(pageNum, pageSize);
+        PageHelper.startPage(pageNum, pageSize, true, null, true);
         List<Cron> crons = this.cronService.getCrons(name);
         return SystemResponse.success(new PageInfo<>(crons));
     }

@@ -1,6 +1,6 @@
 <template>
   <div>
-    <!--    搜索行-->
+    <!--搜索行-->
     <el-row>
       <el-form :inline="true" :model="searchForm" ref="searchForm">
         <el-form-item label="任务名称" prop="name">
@@ -22,12 +22,16 @@
       <el-table :data="tableData" style="width: 100%">
         <el-table-column type="index" label="序号" width="50"/>
         <el-table-column prop="name" label="传输名称" width="350"/>
-        <el-table-column prop="statusStr" label="任务状态" width="180"/>
+        <el-table-column prop="status" label="任务状态" width="180">
+          <template slot-scope="scope">
+            <span>{{ scheduleStatus[scope.row.status] }}</span>
+          </template>
+        </el-table-column>
         <el-table-column prop="createTime" label="创建时间"/>
         <el-table-column prop="updateTime" label="修改时间"/>
         <el-table-column label="操作" align="right">
           <template slot-scope="scope">
-            <el-button type="text" size="small" @click="preHandleEdit(scope.row)">
+            <el-button type="text" size="small" @click="preHandleAddOrEdit(scope.row)">
               <i class="el-icon-setting"></i>配置
             </el-button>
             <el-button type="text" size="small" @click="preHandleInstanceQuery(scope.row)">
@@ -49,12 +53,18 @@
             >
               <i class="el-icon-video-pause"></i>停止
             </el-button>
-            <el-button type="text" size="small">
+            <el-button type="text" size="small" @click="handleDelete(scope.row)">
               <i class="el-icon-delete"></i>删除
             </el-button>
           </template>
         </el-table-column>
       </el-table>
+    </el-row>
+    <!--分页-->
+    <el-row type="flex" justify="center">
+      <el-pagination :page-sizes="pageParam.pageSizes" :page-size="pageParam.pageSize"
+                     @size-change="handlePageSizeChange" @current-change="handlePageNumChange"
+                     layout="total, sizes, prev, pager, next, jumper" :total="pageParam.total"></el-pagination>
     </el-row>
   </div>
 </template>
@@ -67,33 +77,51 @@ export default {
       searchForm: {
         name: null,
       },
-      tableData: []
+      tableData: [],
+      pageParam: {
+        pageNum: 1,
+        pageSize: 30,
+        pageSizes: [30, 50, 100],
+        total: 0,
+      },
+      scheduleStatus: ['未运行', '调度中', '成功完成', '异常结束', '存在告警']
     }
   },
   mounted() {
     this.handleTableDataQuery()
   },
   methods: {
+    //处理单页大小变动
+    handlePageSizeChange(pageSize) {
+      this.pageParam.pageSize = pageSize;
+      this.handleTableDataQuery()
+    },
+    //处理页码变动
+    handlePageNumChange(pageNum) {
+      this.pageParam.pageNum = pageNum;
+      this.handleTableDataQuery()
+    },
     //处理搜索
     handleSearch() {
+      this.handleTableDataQuery()
     },
     //处理搜索重置
     handleRefresh() {
-    },
-    //预处理编辑按扭
-    preHandleEdit(record) {
-      console.log(record)
+      this.$refs.searchForm.resetFields();
+      this.handleTableDataQuery();
     },
     //查询列表数据
     handleTableDataQuery() {
-      this.tableData = [{
-        id: 1,
-        name: '同步任务1',
-        status: 0,
-        statusStr: '调度中',
-        createTime: '2020-12-08 00:00:00',
-        updateTime: '2020-12-08 00:00:00'
-      }]
+      let params = {
+        pageNum: this.pageParam.pageNum,
+        pageSize: this.pageParam.pageSize,
+        name: this.searchForm.name,
+      }
+      this.$http.getJobs({params}).then(resp => {
+        this.tableData = resp.data.list
+        this.pageParam.total = resp.data.total
+
+      })
     },
     //预处理实例查询
     preHandleInstanceQuery(record) {
@@ -103,14 +131,21 @@ export default {
     preHandleAddOrEdit(record) {
       if (record) {
         this.$router.push({
-          path: "/products/dataExchangeTool/job/add"
+          path: "/products/dataExchangeTool/job/add",
+          query: {id: record.id},
         })
       } else {
         this.$router.push({
           path: "/products/dataExchangeTool/job/edit",
-          query: {id: record.id},
         })
       }
+    },
+    handleDelete(record) {
+      let path = {id: record.id}
+      this.$http.deleteJob({path}).then(() => {
+        this.$message.success('删除成功')
+        this.handleTableDataQuery()
+      })
     }
   }
 }

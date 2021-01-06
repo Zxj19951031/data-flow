@@ -93,7 +93,7 @@ public class DatasourceController {
                                                      @RequestParam(required = false) String name,
                                                      @RequestParam(required = false) Integer type) {
 
-        PageHelper.startPage(pageNum, pageSize);
+        PageHelper.startPage(pageNum, pageSize, true, null, true);
         DatasourceQueryDTO params = new DatasourceQueryDTO(name, type);
         List<Datasource> datasourceList = this.datasourceService.listByParams(params);
         return SystemResponse.success(new PageInfo<>(datasourceList));
@@ -101,6 +101,7 @@ public class DatasourceController {
 
     /**
      * 测试数据源连通性
+     *
      * @param vo DatasourceSaveVO
      * @return true or false
      */

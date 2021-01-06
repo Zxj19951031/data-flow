@@ -58,6 +58,46 @@ const GETAWAY_API = {
     testConnection: {
         method: 'POST',
         url: '/jobApi/datasource/connectivity'
+    },
+    //查询数据源模式列表
+    getDatasourceSchemas: {
+        method: 'GET',
+        url: '/jobApi/datasource/{{id}}/schemas'
+    },
+    //查询数据源表信息
+    getDatasourceTables: {
+        method: 'GET',
+        url: '/jobApi/datasource/{{id}}/tables'
+    },
+    //查询数据源字段列表
+    getDatasourceColumns: {
+        method: 'GET',
+        url: '/jobApi/datasource/{{id}}/columns'
+    },
+    //新增任务
+    saveJob: {
+        method: 'POST',
+        url: '/jobApi/job'
+    },
+    //获取任务列表
+    getJobs: {
+        method: 'GET',
+        url: '/jobApi/jobs'
+    },
+    //获取单个任务
+    getJob: {
+        method: 'GET',
+        url: '/jobApi/job/{{id}}'
+    },
+    //更新任务
+    updateJob: {
+        method: 'PUT',
+        url: '/jobApi/job/{{id}}'
+    },
+    // 删除任务
+    deleteJob: {
+        method: 'DELETE',
+        url: '/jobApi/job/{{id}}'
     }
 };
 

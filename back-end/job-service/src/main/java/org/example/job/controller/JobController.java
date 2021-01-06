@@ -4,8 +4,11 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import org.example.job.commons.SystemResponse;
 import org.example.job.dto.JobQueryDTO;
+import org.example.job.model.Datasource;
 import org.example.job.model.Job;
+import org.example.job.service.DatasourceService;
 import org.example.job.service.JobService;
+import org.example.job.vo.JobQueryVO;
 import org.example.job.vo.JobSaveVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -22,6 +25,9 @@ public class JobController {
 
     @Autowired
     private JobService jobService;
+
+    @Autowired
+    private DatasourceService datasourceService;
 
     /**
      * 新增任务
@@ -43,9 +49,19 @@ public class JobController {
      * @return Job
      */
     @GetMapping(value = "job/{id}")
-    public SystemResponse<Job> getJob(@PathVariable Integer id) {
+    public SystemResponse<JobQueryVO> getJob(@PathVariable Integer id) {
         Job job = this.jobService.findById(id);
-        return SystemResponse.success(job);
+
+        if (job == null)
+            return SystemResponse.success(null);
+
+        Datasource fromDs = this.datasourceService.findById(job.getFromDatasource());
+        Datasource toDs = this.datasourceService.findById(job.getToDatasource());
+
+        JobQueryVO vo = new JobQueryVO(job);
+        vo.setFromDatasourceType(fromDs.getType());
+        vo.setToDatasourceType(toDs.getType());
+        return SystemResponse.success(vo);
     }
 
     /**
@@ -55,7 +71,7 @@ public class JobController {
      * @param vo 更新内容
      * @return 更新记录数
      */
-    @PutMapping(value = "job/{id}/update")
+    @PutMapping(value = "job/{id}")
     public SystemResponse<Integer> update(@PathVariable Integer id, @Valid @RequestBody JobSaveVO vo) {
         Job job = vo.toJob();
         job.setId(id);
@@ -89,9 +105,9 @@ public class JobController {
                                               @RequestParam Integer pageSize,
                                               @RequestParam(required = false) String name,
                                               @RequestParam(required = false) Integer scheduleStatus) {
-        PageHelper.startPage(pageNum,pageSize);
-        JobQueryDTO params = new JobQueryDTO(name,scheduleStatus);
-        List<Job> jobs= this.jobService.listByParams(params);
+        PageHelper.startPage(pageNum, pageSize);
+        JobQueryDTO params = new JobQueryDTO(name, scheduleStatus);
+        List<Job> jobs = this.jobService.listByParams(params);
         return SystemResponse.success(new PageInfo<>(jobs));
     }
 }

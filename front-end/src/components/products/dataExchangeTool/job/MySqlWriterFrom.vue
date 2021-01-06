@@ -38,9 +38,10 @@
 
 <script>
 export default {
-  name: "MySqlWriterFrom",
+  name: "MysqlWriter",
   props: {
-    id: String
+    id: String,
+    data: Object
   },
   data() {
     return {
@@ -50,9 +51,10 @@ export default {
         method: "insert",
         preSql: "",
         postSql: "",
-        queryTimeout: "",
-        loginTimeout: "",
-        bufferSize: ""
+        queryTimeout: 60,
+        loginTimeout: 10,
+        bufferSize: 1000,
+        columns: []
       },
       schemaSelectData: [],
       tableSelectData: []
@@ -60,26 +62,75 @@ export default {
   },
   mounted() {
     this.handleSchemaQuery()
+    if (this.$props.data) {
+      this.formData = this.$props.data
+      this.handleSchemaSelectChange()
+      this.handleTableSelectChange()
+    }
   },
   methods: {
     //查询Schema列表
     handleSchemaQuery() {
-      this.schemaSelectData = ['z-flowable']
+      let path = {id: this.$props.id}
+      this.$http.getDatasourceSchemas({path}).then(resp => {
+        this.schemaSelectData = resp.data;
+      })
     },
     //处理Schema变化
     handleSchemaSelectChange() {
-      this.tableSelectData = ['z-flowable.ACT_APP_DATABASECHANGELOG']
+      let path = {id: this.$props.id}
+      let params = {schema: this.formData.schema}
+      this.$http.getDatasourceTables({path, params}).then(resp => {
+        this.tableSelectData = resp.data;
+      })
     },
     //处理Table变化
     handleTableSelectChange() {
-      const col = [{
-        name: "id",
-        type: "int(11)"
-      }, {
-        name: "name",
-        type: "varchar(255)"
-      },]
-      this.$emit('columnCallBack', col)
+      let path = {id: this.$props.id}
+      let params = {
+        schema: this.formData.schema,
+        table: this.formData.table
+      }
+      this.$http.getDatasourceColumns({path, params}).then(resp => {
+        let allColumns = [];
+        for (let col of resp.data) {
+          allColumns.push({
+            name: col.split('[')[0],
+            type: col.split('[')[1].replace(']', ''),
+            selected: false
+          });
+        }
+
+        let fixed = []
+        if (this.formData.columns) {
+          //踢掉情况1的字段，记做已选的字段
+          for (let column of this.formData.columns) {
+            for (let allColumn of allColumns) {
+              if (allColumn.name === column) {
+                allColumn.selected = true
+                fixed.push(allColumn)
+              }
+            }
+          }
+
+          //保留情况2的字段，记做未选的字段
+          for (let column of allColumns) {
+            let unselected = true;
+            for (let selectedColumn of fixed) {
+              if (selectedColumn.name === column.name) {
+                unselected = false
+                break
+              }
+            }
+            if (unselected) {
+              fixed.push(column)
+            }
+          }
+        }else{
+          fixed = allColumns
+        }
+        this.$emit('columnCallBack', fixed)
+      })
     }
   }
 }

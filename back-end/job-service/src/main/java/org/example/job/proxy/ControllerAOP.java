@@ -1,5 +1,8 @@
 package org.example.job.proxy;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import feign.FeignException;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
@@ -53,6 +56,8 @@ public class ControllerAOP {
             logger.error("接口{}异常", pjp.getSignature(), e);
             if (e instanceof SystemException) {
                 throw ((SystemException) e);
+            } else if (e instanceof FeignException) {
+                throw ((FeignException) e);
             } else {
                 throw SystemException.newException(SystemError.SERVER_ERROR, e);
             }
@@ -60,14 +65,33 @@ public class ControllerAOP {
     }
 
     /**
+     * feign 服务调用异常
+     *
+     * @param  e 异常
+     * @return SystemResponse
+     */
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    @ExceptionHandler(FeignException.class)
+    public SystemResponse<?> feignServerExceptionHandler(FeignException e) {
+        logger.error("服务调用异常", e);
+        try {
+            ObjectMapper objectMapper = new ObjectMapper();
+            return objectMapper.readValue(e.contentUTF8(), SystemResponse.class);
+        } catch (JsonProcessingException jsonProcessingException) {
+            logger.error("json processing exception", e);
+            return SystemResponse.error(SystemException.newException(SystemError.SERVER_ERROR));
+        }
+    }
+
+    /**
      * 自定义包装异常
      *
      * @param e 异常
-     * @return RespResult
+     * @return SystemResponse
      */
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler(SystemException.class)
-    public SystemResponse<?> parameterMissingExceptionHandler(SystemException e) {
+    public SystemResponse<?> systemExceptionHandler(SystemException e) {
         logger.error("服务器内部错误", e);
         return SystemResponse.error(e);
     }
@@ -94,7 +118,7 @@ public class ControllerAOP {
      */
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(HttpMessageNotReadableException.class)
-    public SystemResponse<?> parameterBodyMissingExceptionHandler(HttpMessageNotReadableException e) {
+    public SystemResponse<?> httpMessageNotReadableExceptionHandler(HttpMessageNotReadableException e) {
         logger.error("请求体参数异常", e);
         return SystemResponse.error(SystemException.newException(SystemError.PARAMETER_ERROR, "请求体参数异常"));
     }
@@ -107,7 +131,7 @@ public class ControllerAOP {
      */
     @ResponseStatus(HttpStatus.METHOD_NOT_ALLOWED)
     @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
-    public SystemResponse<?> parameterBodyMissingExceptionHandler(HttpRequestMethodNotSupportedException e) {
+    public SystemResponse<?> httpRequestMethodNotSupportedExceptionExceptionHandler(HttpRequestMethodNotSupportedException e) {
         logger.error("请求方法不支持", e);
         return SystemResponse.error(SystemException.newException(SystemError.PARAMETER_ERROR, "请求方法不支持"));
     }
@@ -120,7 +144,7 @@ public class ControllerAOP {
      */
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public SystemResponse<?> parameterExceptionHandler(MethodArgumentNotValidException e) {
+    public SystemResponse<?> methodArgumentNotValidExceptionHandler(MethodArgumentNotValidException e) {
         logger.error("参数效验异常", e);
         // 获取异常信息
         BindingResult exceptions = e.getBindingResult();

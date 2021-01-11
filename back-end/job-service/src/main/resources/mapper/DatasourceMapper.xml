@@ -45,9 +45,6 @@
             <if test="name != null">
                 `name` = #{name,jdbcType=VARCHAR},
             </if>
-            <if test="type != null">
-                `type` = #{type,jdbcType=INTEGER},
-            </if>
             <if test="host != null">
                 `host` = #{host,jdbcType=VARCHAR},
             </if>

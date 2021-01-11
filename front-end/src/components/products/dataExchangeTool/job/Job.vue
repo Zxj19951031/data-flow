@@ -24,7 +24,7 @@
         <el-table-column prop="name" label="传输名称" width="350"/>
         <el-table-column prop="status" label="任务状态" width="180">
           <template slot-scope="scope">
-            <span>{{ scheduleStatus[scope.row.status] }}</span>
+            <span>{{ scheduleStatus[scope.row.scheduleStatus] }}</span>
           </template>
         </el-table-column>
         <el-table-column prop="createTime" label="创建时间"/>
@@ -37,20 +37,10 @@
             <el-button type="text" size="small" @click="preHandleInstanceQuery(scope.row)">
               <i class="el-icon-tickets"></i>查看实例
             </el-button>
-            <el-button
-                type="text"
-                size="small"
-                @click="onRegister(scope.row)"
-                v-if="scope.row.registered===0"
-            >
+            <el-button type="text" size="small" @click="handleRegister(scope.row)" v-if="scope.row.scheduleStatus===0">
               <i class="el-icon-video-play"></i>运行
             </el-button>
-            <el-button
-                type="text"
-                size="small"
-                @click="onCancel(scope.row)"
-                v-if="scope.row.registered===1"
-            >
+            <el-button type="text" size="small" @click="handleCancel(scope.row)" v-if="scope.row.scheduleStatus===1">
               <i class="el-icon-video-pause"></i>停止
             </el-button>
             <el-button type="text" size="small" @click="handleDelete(scope.row)">
@@ -84,7 +74,7 @@ export default {
         pageSizes: [30, 50, 100],
         total: 0,
       },
-      scheduleStatus: ['未运行', '调度中', '成功完成', '异常结束', '存在告警']
+      scheduleStatus: ['未调度', '调度中']
     }
   },
   mounted() {
@@ -144,6 +134,21 @@ export default {
       let path = {id: record.id}
       this.$http.deleteJob({path}).then(() => {
         this.$message.success('删除成功')
+        this.handleTableDataQuery()
+      })
+    },
+    handleRegister(record) {
+      let path = {id: record.id}
+      this.$http.registerJob({path}).then(resp => {
+
+        this.$message.success('注册任务成功，将于' + resp.data + '启动')
+        this.handleTableDataQuery()
+      })
+    },
+    handleCancel(record) {
+      let path = {id: record.id}
+      this.$http.cancelJob({path}).then(() => {
+        this.$message.success('注销任务成功')
         this.handleTableDataQuery()
       })
     }

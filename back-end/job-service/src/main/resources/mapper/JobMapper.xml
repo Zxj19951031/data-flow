@@ -23,6 +23,11 @@
         </if>
         order by create_time desc
     </select>
+    <select id="selectByDatasource" resultType="org.example.job.model.Job">
+        select
+        <include refid="Base_Column_List"/>
+        from tb_job where status = 0 and (from_datasource = #{value} or to_datasource = #{value})
+    </select>
     <update id="deleteByPrimaryKey" parameterType="java.lang.Integer">
         update tb_job
         set status = 1
@@ -54,5 +59,10 @@
             </if>
         </set>
         where id = #{id,jdbcType=INTEGER}
+    </update>
+    <update id="updateScheduleStatus">
+        update tb_job
+        set schedule_status = #{scheduleStatus}
+        where id = #{id}
     </update>
 </mapper>

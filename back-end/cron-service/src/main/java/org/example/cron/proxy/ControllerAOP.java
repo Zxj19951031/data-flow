@@ -67,9 +67,9 @@ public class ControllerAOP {
      */
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler(SystemException.class)
-    public SystemResponse<?> parameterMissingExceptionHandler(SystemException e) {
+    public SystemResponse<?> systemExceptionHandler(SystemException e) {
         logger.error("服务器内部错误", e);
-        return SystemResponse.error(SystemException.newException(SystemError.SERVER_ERROR, "服务器内部错误"));
+        return SystemResponse.error(e);
     }
 
 
@@ -94,7 +94,7 @@ public class ControllerAOP {
      */
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(HttpMessageNotReadableException.class)
-    public SystemResponse<?> parameterBodyMissingExceptionHandler(HttpMessageNotReadableException e) {
+    public SystemResponse<?> httpMessageNotReadableExceptionHandler(HttpMessageNotReadableException e) {
         logger.error("缺少请求体", e);
         return SystemResponse.error(SystemException.newException(SystemError.PARAMETER_ERROR, "缺少请求体"));
     }
@@ -107,7 +107,7 @@ public class ControllerAOP {
      */
     @ResponseStatus(HttpStatus.METHOD_NOT_ALLOWED)
     @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
-    public SystemResponse<?> parameterBodyMissingExceptionHandler(HttpRequestMethodNotSupportedException e) {
+    public SystemResponse<?> httpRequestMethodNotSupportedExceptionHandler(HttpRequestMethodNotSupportedException e) {
         logger.error("请求方法不支持", e);
         return SystemResponse.error(SystemException.newException(SystemError.PARAMETER_ERROR, "请求方法不支持"));
     }
@@ -120,7 +120,7 @@ public class ControllerAOP {
      */
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public SystemResponse<?> parameterExceptionHandler(MethodArgumentNotValidException e) {
+    public SystemResponse<?> methodArgumentNotValidExceptionHandler(MethodArgumentNotValidException e) {
         logger.error("参数效验异常", e);
         // 获取异常信息
         BindingResult exceptions = e.getBindingResult();

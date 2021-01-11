@@ -216,10 +216,7 @@ export default {
         list: [],
         noMore: false
       },
-      ruleSelectData: [{
-        id: -1,
-        name: '手动触发'
-      }]
+      ruleSelectData: []
     }
   },
   mounted() {
@@ -262,6 +259,7 @@ export default {
           this.formData.source_col.length,
           this.formData.target_col.length
       );
+      this.formData.line = [];
       for (let index = 0; index < minLineCount; index++) {
         this.formData.line.push({
           value: this.formData.source_col[index].selected && this.formData.target_col[index].selected ? 100 : 0,
@@ -276,6 +274,7 @@ export default {
           this.formData.source_col.length,
           this.formData.target_col.length
       );
+      this.formData.line = [];
       for (let index = 0; index < minLineCount; index++) {
         this.formData.line.push({
           value: this.formData.source_col[index].selected && this.formData.target_col[index].selected ? 100 : 0,

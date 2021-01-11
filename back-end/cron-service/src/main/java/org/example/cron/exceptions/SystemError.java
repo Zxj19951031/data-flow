@@ -9,6 +9,7 @@ package org.example.cron.exceptions;
 public enum SystemError implements IErrorCode {
     PARAMETER_ERROR(400, "参数错误"),
     VALIDATION_ERROR(400, "参数校验不通过"),
+    RECORD_NOT_FOUND(400, "目标记录不存在"),
     NOT_LOGIN(401, "用户未登录"),
     AUTHENTICATE_ERROR(401, "认证失败"),
     USERNAME_PASSWORD_ERROR(401, "用户名或密码错误"),

@@ -10,6 +10,12 @@ import java.util.List;
  * @since 2020/12/21
  */
 public interface DatasourceService {
+    /**
+     * 新增数据源
+     *
+     * @param datasource Datasource
+     * @return 保存记录数
+     */
     int save(Datasource datasource);
 
     /**
@@ -23,6 +29,7 @@ public interface DatasourceService {
 
     /**
      * 通过ID删除
+     * 约束：被任务引用的数据源不能删除
      *
      * @param id ID
      * @return deleted count
@@ -31,6 +38,7 @@ public interface DatasourceService {
 
     /**
      * 更新记录
+     * 注意：数据源的类型不允许更新，因为当存在任务引用该数据源作为读写源时，修改类型会导致调度实例生成时配置异常
      *
      * @param datasource Datasource
      * @return updated count

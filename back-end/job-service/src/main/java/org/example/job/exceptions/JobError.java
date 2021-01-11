@@ -1,18 +1,19 @@
-package org.example.cron.exceptions;
+package org.example.job.exceptions;
 
 /**
+ * 系统内容异常
+ *
  * @author zhuxj
- * @since 2020/12/17
+ * @since 2020/10/13
  */
-public enum QuartzError implements IErrorCode {
-    CRON_EXPRESSION_ERROR(5001, "调度表达式异常"),
-    REGISTER_JOB_ERROR(5002, "调度任务注册异常"),
-    CANCEL_JOB_ERROR(5003, "调度任务注销异常");
+public enum JobError implements IErrorCode {
+    REGISTER_ERROR(8001, "注册任务失败"),
+    CANCEL_ERROR(8002, "注销任务失败");
 
     private final int code;
     private final String description;
 
-    QuartzError(int code, String description) {
+    JobError(int code, String description) {
         this.code = code;
         this.description = description;
     }

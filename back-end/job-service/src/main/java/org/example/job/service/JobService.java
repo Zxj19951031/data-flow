@@ -1,6 +1,7 @@
 package org.example.job.service;
 
 import org.example.job.dto.JobQueryDTO;
+import org.example.job.enums.ScheduleStatusEnum;
 import org.example.job.model.Job;
 
 import java.util.List;
@@ -52,4 +53,13 @@ public interface JobService {
      * @see JobQueryDTO
      */
     List<Job> listByParams(JobQueryDTO params);
+
+    /**
+     * 更新任务调度状态
+     *
+     * @param id                 任务编号
+     * @param scheduleStatusEnum 调度状态
+     * @return 受影响行数
+     */
+    int updateScheduleStatus(Integer id, ScheduleStatusEnum scheduleStatusEnum);
 }

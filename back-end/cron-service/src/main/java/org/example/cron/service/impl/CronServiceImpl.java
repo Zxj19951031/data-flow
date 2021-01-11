@@ -31,7 +31,7 @@ public class CronServiceImpl implements CronService {
     @Override
     public int save(Cron cron) {
         this.cronMapper.insert(cron);
-        log.info("新增调度规则记录\n{}", cron);
+        log.info("新增调度规则记录,record={}", cron);
         return cron.getId();
     }
 
@@ -48,21 +48,21 @@ public class CronServiceImpl implements CronService {
     @Override
     public int update(Cron cron) {
         int cnt = this.cronMapper.updateByPrimaryKeySelective(cron);
-        log.info("更新调度规则记录\n条数={},{}", cnt, cron);
+        log.info("更新调度规则记录,条数={},{}", cnt, cron);
         return cnt;
     }
 
     @Override
     public int delete(Integer id) {
         int cnt = this.cronMapper.deleteByPrimaryKey(id);
-        log.info("删除调度规则记录\n条数={},id={}", cnt, id);
+        log.info("删除调度规则记录,条数={},id={}", cnt, id);
         return cnt;
     }
 
     @Override
     public List<Date> testCron(String cron, Integer cnt) {
         if (!CronExpression.isValidExpression(cron)) {
-            log.error("不符合规则的调度表达式\n{}", cron);
+            log.error("不符合规则的调度表达式,{}", cron);
             throw SystemException.newException(QuartzError.CRON_EXPRESSION_ERROR, "不符合规则的调度表达式");
         }
         if (cnt == null || cnt <= 0) {

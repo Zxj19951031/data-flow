@@ -65,7 +65,7 @@
               <el-input placeholder="请输入数据源名称" v-model="formData.name"></el-input>
             </el-form-item>
             <el-form-item label="数据源类型" placeholder="请选择" prop="type">
-              <el-select v-model="formData.type">
+              <el-select v-model="formData.type" :disabled="drawerData.type==='edit'">
                 <el-option v-for="item in searchData.types" :key="item.value" :label="item.label"
                            :value="item.value"></el-option>
               </el-select>

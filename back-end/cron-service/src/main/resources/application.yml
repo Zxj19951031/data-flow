@@ -1,6 +1,5 @@
 server:
   port: 8081
-
 spring:
   datasource:
     url: jdbc:mysql://localhost:3306/practice_cron?characterEncoding=utf8&useSSL=true&serverTimezone=GMT%2B8
@@ -28,7 +27,16 @@ spring:
     job-store-type: jdbc
     jdbc:
       initialize-schema: always
+  application:
+    name: cron-service
 mybatis:
   mapper-locations: classpath:/mapper/*Mapper.xml
   configuration:
     map-underscore-to-camel-case: true
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka/
+  instance:
+    appname: cron-service

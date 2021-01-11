@@ -1,6 +1,7 @@
 package org.example.job.mapper;
 
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 import org.example.job.dto.JobQueryDTO;
 import org.example.job.model.Job;
 
@@ -17,4 +18,8 @@ public interface JobMapper {
     int updateByPrimaryKeySelective(Job record);
 
     List<Job> select(JobQueryDTO params);
+
+    int updateScheduleStatus(@Param("id") Integer id, @Param("scheduleStatus") Integer scheduleStatus);
+
+    List<Job> selectByDatasource(Integer id);
 }

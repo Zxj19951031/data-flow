@@ -98,6 +98,16 @@ const GETAWAY_API = {
     deleteJob: {
         method: 'DELETE',
         url: '/jobApi/job/{{id}}'
+    },
+    //注册任务
+    registerJob: {
+        method: 'POST',
+        url: '/jobApi/scheduler/register/job/{{id}}'
+    },
+    //注销任务
+    cancelJob:{
+        method: 'POST',
+        url: '/jobApi/scheduler/cancel/job/{{id}}'
     }
 };
 

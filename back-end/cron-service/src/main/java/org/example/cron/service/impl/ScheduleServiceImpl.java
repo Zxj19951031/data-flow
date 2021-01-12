@@ -6,6 +6,7 @@ import org.example.cron.exceptions.SystemError;
 import org.example.cron.exceptions.SystemException;
 import org.example.cron.jobs.JobConsumer;
 import org.example.cron.model.Cron;
+import org.example.cron.rpc.JobService;
 import org.example.cron.service.CronService;
 import org.example.cron.service.ScheduleService;
 import org.quartz.*;
@@ -27,6 +28,8 @@ public class ScheduleServiceImpl implements ScheduleService {
     private Scheduler scheduler;
     @Autowired
     private CronService cronService;
+    @Autowired
+    private JobService jobService;
 
     @Override
     public Date register(Integer cronId, Integer jobId) {
@@ -36,11 +39,16 @@ public class ScheduleServiceImpl implements ScheduleService {
             throw SystemException.newException(SystemError.RECORD_NOT_FOUND, "任务调度规则配置有误，请确认！");
         }
         try {
+            JobDataMap jobDataMap = new JobDataMap();
+            jobDataMap.put("jobId", jobId);
             JobDetail job = JobBuilder
                     .newJob(JobConsumer.class)
                     .withIdentity(JobKey.jobKey("JOB-" + jobId))
+                    .usingJobData(jobDataMap)
                     .build();
-            MutableTrigger trigger = CronScheduleBuilder.cronSchedule(cron.getExpression()).build();
+            MutableTrigger trigger = CronScheduleBuilder
+                    .cronSchedule(cron.getExpression())
+                    .withMisfireHandlingInstructionFireAndProceed().build();
             trigger.setKey(TriggerKey.triggerKey("Trigger-" + jobId));
             Date nextFireTime = this.scheduler.scheduleJob(job, trigger);
             log.info("向调度器注册任务完成，下次触发时间为{}", nextFireTime);

@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.example.job.mapper.JobInstanceMapper">
+    <sql id="Base_Column_List">
+        id, job_id, `status`, start_time, end_time, read_cnt, write_cnt, from_datasource,
+    to_datasource, plugin_config, create_time, update_time
+    </sql>
+    <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultType="org.example.job.model.JobInstance">
+        select
+        <include refid="Base_Column_List"/>
+        from tb_job_instance
+        where id = #{id,jdbcType=INTEGER}
+    </select>
+    <insert id="insert" keyColumn="id" keyProperty="id" parameterType="org.example.job.model.JobInstance"
+            useGeneratedKeys="true">
+        insert into tb_job_instance (job_id, `status`, start_time,
+                                     end_time, read_cnt, write_cnt,
+                                     from_datasource, to_datasource, plugin_config)
+        values (#{jobId,jdbcType=INTEGER}, #{status,jdbcType=TINYINT}, #{startTime,jdbcType=TIMESTAMP},
+                #{endTime,jdbcType=TIMESTAMP}, #{readCnt,jdbcType=BIGINT}, #{writeCnt,jdbcType=BIGINT},
+                #{fromDatasource,jdbcType=INTEGER}, #{toDatasource,jdbcType=INTEGER}, #{pluginConfig,jdbcType=VARCHAR})
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="org.example.job.model.JobInstance">
+        update tb_job_instance
+        <set>
+            <if test="status != null">
+                `status` = #{status,jdbcType=TINYINT},
+            </if>
+            <if test="startTime != null">
+                start_time = #{startTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="endTime != null">
+                end_time = #{endTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="readCnt != null">
+                read_cnt = #{readCnt,jdbcType=BIGINT},
+            </if>
+            <if test="writeCnt != null">
+                write_cnt = #{writeCnt,jdbcType=BIGINT},
+            </if>
+        </set>
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+    <update id="updateStatus">
+        update tb_job_instance
+        <set>
+            <if test="status != null">
+                `status` = #{status,jdbcType=TINYINT},
+            </if>
+        </set>
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+</mapper>

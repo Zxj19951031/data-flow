@@ -98,7 +98,7 @@ public class JobController {
      * @param pageNum  页码
      * @param pageSize 单页大小
      * @param name     任务名称
-     * @return
+     * @return PageInfo<Job>
      */
     @GetMapping(value = "jobs")
     public SystemResponse<PageInfo<Job>> list(@RequestParam Integer pageNum,

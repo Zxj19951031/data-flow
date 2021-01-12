@@ -9,7 +9,8 @@ import java.util.Date;
 /**
  * tb_job
  *
- * @author
+ * @author zhuxj
+ * @since 2020/12/23
  */
 @Data
 public class Job implements Serializable {

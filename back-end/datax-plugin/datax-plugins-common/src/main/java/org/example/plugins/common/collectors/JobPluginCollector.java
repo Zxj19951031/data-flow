@@ -22,22 +22,22 @@ public class JobPluginCollector implements PluginCollector {
     /**
      * 任务开始时间
      */
-    private LocalDateTime startLocalDateTime;
+    protected LocalDateTime startLocalDateTime;
 
     /**
      * 任务结束时间
      */
-    private LocalDateTime endLocalDateTime;
+    protected LocalDateTime endLocalDateTime;
 
     /**
      * 子task信息收集器
      */
-    private List<TaskPluginCollector> taskPluginCollectors;
+    protected List<TaskPluginCollector> taskPluginCollectors;
 
 
-    private BigInteger readCnt = new BigInteger("0");
-    private BigInteger writeCnt = new BigInteger("0");
-    private BigInteger errorCnt = new BigInteger("0");
+    protected BigInteger readCnt = new BigInteger("0");
+    protected BigInteger writeCnt = new BigInteger("0");
+    protected BigInteger errorCnt = new BigInteger("0");
 
     /**
      * 阶段性汇报
@@ -67,8 +67,11 @@ public class JobPluginCollector implements PluginCollector {
 
     /**
      * 终止汇报
+     *
+     * @param hasError 是否发生异常
+     * @param warning  是否发生告警
      */
-    public void finalReport() {
+    public void finalReport(boolean hasError, boolean warning) {
         long costTime = Duration.between(startLocalDateTime, endLocalDateTime).get(ChronoUnit.SECONDS);
         long speedIn = Math.round(readCnt.floatValue() / costTime);
         long speedOut = Math.round(writeCnt.floatValue() / costTime);

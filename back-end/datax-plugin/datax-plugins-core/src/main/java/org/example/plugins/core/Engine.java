@@ -22,7 +22,7 @@ import java.util.Set;
 public class Engine {
 
     private static final Logger logger = LoggerFactory.getLogger(Engine.class);
-    private final JsonObject allConfig;
+    protected final JsonObject allConfig;
 
     public Engine(JsonObject allConfig) {
         this.allConfig = allConfig;

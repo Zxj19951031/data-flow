@@ -25,8 +25,7 @@ spring:
       connectionProperties: druid.stat.mergeSql=true;druid.stat.slowSqlMillis=500
   quartz:
     job-store-type: jdbc
-    jdbc:
-      initialize-schema: always
+    startup-delay: 5
   application:
     name: cron-service
 mybatis:
@@ -40,3 +39,7 @@ eureka:
       defaultZone: http://localhost:8761/eureka/
   instance:
     appname: cron-service
+
+feign:
+  circuitbreaker:
+    enabled: false

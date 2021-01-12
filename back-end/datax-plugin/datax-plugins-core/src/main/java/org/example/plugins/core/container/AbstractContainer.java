@@ -31,4 +31,8 @@ public abstract class AbstractContainer {
     public PluginCollector getPluginCollector() {
         return pluginCollector;
     }
+
+    public void setPluginCollector(PluginCollector pluginCollector) {
+        this.pluginCollector = pluginCollector;
+    }
 }

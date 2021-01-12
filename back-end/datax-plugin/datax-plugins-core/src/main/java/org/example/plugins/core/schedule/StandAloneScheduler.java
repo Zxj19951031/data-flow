@@ -47,11 +47,12 @@ public class StandAloneScheduler extends AbstractScheduler {
             collector.setTaskPluginCollectors(list);
 
 
+            boolean hasError = false;
+            boolean warning = false;
             while (true) {
 
                 report();
                 int finished = 0;
-                boolean hasError = false;
                 for (TaskContainer taskContainer : taskContainers) {
                     if (taskContainer.getStatus() == PluginStatus.ERROR) {
                         logger.error("读写任务组存在异常");
@@ -62,6 +63,10 @@ public class StandAloneScheduler extends AbstractScheduler {
                         finished++;
                         logger.info("累计完成读写任务共{}组", finished);
                     }
+                    if (taskContainer.getStatus() == PluginStatus.WARN) {
+                        warning = true;
+                        logger.warn("任务发生告警");
+                    }
                 }
                 if (hasError || finished == taskContainers.size()) {
                     break;
@@ -70,7 +75,8 @@ public class StandAloneScheduler extends AbstractScheduler {
                 Thread.sleep(jobSleepIntervalInMillSec);
             }
             collector.setEndLocalDateTime(LocalDateTime.now());
-            collector.finalReport();
+
+            collector.finalReport(hasError, warning);
         } catch (InterruptedException e) {
             logger.error("捕获到InterruptedException异常!", e);
             throw SystemException.newException(CommonError.RUNTIME_ERROR, e);

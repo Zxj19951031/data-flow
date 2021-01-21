@@ -3,6 +3,8 @@ package org.example.job.service;
 import org.example.job.enums.InstanceStatusEnum;
 import org.example.job.model.JobInstance;
 
+import java.util.List;
+
 /**
  * @author zhuxj
  * @since 2021/1/11
@@ -32,4 +34,12 @@ public interface JobInstanceService {
      * @return 更新记录数
      */
     int updateStatus(Integer id, InstanceStatusEnum status);
+
+    /**
+     * 通过Job id查询任务下的所有实例
+     *
+     * @param jobId 任务编号
+     * @return 实例列表
+     */
+    List<JobInstance> findByJobId(Integer jobId);
 }

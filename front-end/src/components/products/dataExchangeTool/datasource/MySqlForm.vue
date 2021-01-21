@@ -23,7 +23,7 @@ export default {
     return {
       formData: {
         host: null,
-        port: 3066,
+        port: 3306,
         username: null,
         password: null
       }

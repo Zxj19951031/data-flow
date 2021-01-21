@@ -18,10 +18,10 @@ public class SqlUtil {
 
     private static final Logger log = LoggerFactory.getLogger(SqlUtil.class);
 
-    private static final String format = "select %s from %s where 1=1";
-    private static final String insertMode = "insert into %s(%s) values (%s)";
+    private static final String format = "select %s from `%s` where 1=1";
+    private static final String insertMode = "insert into `%s`(%s) values (%s)";
     private static final String updateMode = insertMode + " on duplicate key update %s";
-    private static final String replaceMode = "replace into %s(%s) values (%s)";
+    private static final String replaceMode = "replace into `%s`(%s) values (%s)";
 
     public static String buildQuerySql(JsonObject config) {
         return String.format(format, getColumns(config), getTableName(config));
@@ -66,8 +66,7 @@ public class SqlUtil {
                 new ArrayList<String>());
         try {
             statement = conn.createStatement();
-            String queryColumnSql = "select " + getColumns(config) + " from " + getTableName(config)
-                    + " where 1=2";
+            String queryColumnSql = String.format("select %s from `%s` where 1=2", getColumns(config), getTableName(config));
 
             rs = statement.executeQuery(queryColumnSql);
             ResultSetMetaData rsMetaData = rs.getMetaData();

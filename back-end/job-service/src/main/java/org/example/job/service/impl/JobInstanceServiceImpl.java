@@ -12,11 +12,14 @@ import org.example.job.model.Job;
 import org.example.job.model.JobInstance;
 import org.example.job.service.JobInstanceService;
 import org.example.job.service.PluginService;
+import org.example.plugins.common.commons.CoreConstant;
 import org.example.plugins.common.commons.JsonObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  * @author zhuxj
@@ -39,6 +42,7 @@ public class JobInstanceServiceImpl implements JobInstanceService {
     private PluginService pluginService;
 
     @Override
+    @Transactional
     public int save(Integer id) {
 
         Job job = jobMapper.selectByPrimaryKey(id);
@@ -67,6 +71,7 @@ public class JobInstanceServiceImpl implements JobInstanceService {
         //记录的新增要在发起交换之前，以保证当任务一旦发生错误实例记录已经生成
         int cnt = this.jobInstanceMapper.insert(jobInstance);
         log.info("新增{}条实例记录成功，初始状态为 RUNNING", cnt);
+        finalConfig.set(CoreConstant.JOB_ID,jobInstance.getId());
 
         //异步发起交换任务
         this.pluginService.runDatax(finalConfig);
@@ -84,5 +89,10 @@ public class JobInstanceServiceImpl implements JobInstanceService {
     public int updateStatus(Integer id, InstanceStatusEnum status) {
 
         return this.jobInstanceMapper.updateStatus(id, status.getValue());
+    }
+
+    @Override
+    public List<JobInstance> findByJobId(Integer jobId) {
+        return this.jobInstanceMapper.selectByJobId(jobId);
     }
 }

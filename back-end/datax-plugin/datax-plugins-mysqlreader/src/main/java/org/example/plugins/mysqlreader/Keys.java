@@ -45,4 +45,5 @@ public class Keys {
      * 主键字段，任务切片时会用依据该字段进行切分
      */
     public static final String PRIMARY_KEY = "primaryKey";
+
 }

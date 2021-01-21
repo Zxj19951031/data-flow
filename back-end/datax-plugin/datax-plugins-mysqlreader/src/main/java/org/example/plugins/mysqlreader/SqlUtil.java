@@ -104,7 +104,7 @@ public class SqlUtil {
             String format = "select %s from (%s) as qs";
             return String.format(format, getColumns(config, "qs"), config.getString(Keys.QUERY_SQL).replace(";", ""));
         } else {
-            String format = "select %s from %s where %s";
+            String format = "select %s from `%s` where %s";
             return String.format(format, getColumns(config), getTableName(config), getWhere(config));
         }
     }
@@ -125,7 +125,13 @@ public class SqlUtil {
     }
 
     private static String getWhere(JsonObject config) {
-        return config.getString(Keys.WHERE, "1=1");
+
+        String where = config.getString(Keys.WHERE);
+        if (StringUtils.isBlank(where)) {
+            return "1=1";
+        } else {
+            return where;
+        }
     }
 
     public static List<String> splitWhere(JsonObject config, List<Integer> splitPrimary) {

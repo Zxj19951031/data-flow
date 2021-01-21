@@ -25,7 +25,7 @@
     </el-row>
     <!--记录行-->
     <el-row>
-      <el-table :data="tableData" style="width: 100%">
+      <el-table :data="tableData" style="width: 100%" height="618">
         <el-table-column type="index" label="序号"/>
         <el-table-column prop="name" label="数据源名称" width="300"/>
         <el-table-column prop="typeStr" label="数据源类型" width="90 ">
@@ -76,7 +76,7 @@
         </el-main>
         <el-footer>
           <el-row type="flex" justify="end">
-            <el-button @click="handleConnectionCheck">测试连通性</el-button>
+            <el-button @click="handleConnectionCheck(null)">测试连通性</el-button>
             <el-button type="primary" v-if="drawerData.type==='add'" @click="handleSave">保存新增</el-button>
             <el-button type="primary" v-if="drawerData.type==='edit'" @click="handleUpdate">保存编辑</el-button>
           </el-row>
@@ -105,8 +105,8 @@ export default {
       tableData: [],
       pageParam: {
         pageNum: 1,
-        pageSize: 30,
-        pageSizes: [30, 50, 100],
+        pageSize: 10,
+        pageSizes: [10, 50, 100],
         total: 0,
       },
       drawerData: {
@@ -200,6 +200,7 @@ export default {
       } else {
         Object.assign(params, this.formData);
         Object.assign(params, this.$refs[this.searchData.types[this.formData.type - 1].label].formData)
+        console.log(params)
         // eslint-disable-next-line no-unused-vars
         this.$http.testConnection({params}).then(resp => {
           this.$message.success('Successfully')

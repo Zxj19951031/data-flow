@@ -105,9 +105,14 @@ const GETAWAY_API = {
         url: '/jobApi/scheduler/register/job/{{id}}'
     },
     //注销任务
-    cancelJob:{
+    cancelJob: {
         method: 'POST',
         url: '/jobApi/scheduler/cancel/job/{{id}}'
+    },
+    //获取实例列表
+    getJobInstances: {
+        method: 'GET',
+        url: '/jobApi/job/{{id}}/instances'
     }
 };
 

@@ -1,11 +1,14 @@
 package org.example.job.controller;
 
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import org.example.job.commons.SystemResponse;
+import org.example.job.model.JobInstance;
 import org.example.job.service.JobInstanceService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 /**
  * @author zhuxj
@@ -28,5 +31,23 @@ public class JobInstanceController {
 
         int instanceId = this.jobInstanceService.save(id);
         return SystemResponse.success(instanceId);
+    }
+
+
+    /**
+     * 查询某任务的所有调度实例
+     *
+     * @param id       任务编号
+     * @param pageNum  分页参数，页码
+     * @param pageSize 分页参数，单页大小
+     * @return 实例列表
+     */
+    @GetMapping(value = "job/{id}/instances")
+    public SystemResponse<PageInfo<JobInstance>> getInstances(@PathVariable Integer id,
+                                                              @RequestParam Integer pageNum,
+                                                              @RequestParam Integer pageSize) {
+        PageHelper.startPage(pageNum, pageSize);
+        List<JobInstance> jobs = this.jobInstanceService.findByJobId(id);
+        return SystemResponse.success(new PageInfo<>(jobs));
     }
 }

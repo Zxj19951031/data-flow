@@ -41,14 +41,16 @@ public class PluginServiceImpl implements PluginService {
         Assert.notNull(datasource, "datasource must not be null");
         Assert.notNull(pluginConfig, "pluginConfig must not be null");
 
+        JsonObject readerParameter = pluginConfig.getJsonObject(PluginKeys.JOB_CONTENT_READER_PARAMETER);
+
         switch (DatasourceEnum.getByValue(datasource.getType())) {
             case MYSQL:
                 JsonObject connectionConfig = JsonObject.newDefault();
                 connectionConfig.set(PluginKeys.USERNAME, datasource.getUsername());
                 connectionConfig.set(PluginKeys.PASSWORD, datasource.getPassword());
                 // TODO: 2021/1/11 jdbcUrl配置考虑开放在数据源管理维护，因为涉及到连接参数的维护
-                connectionConfig.set(PluginKeys.JDBC_URL, String.format("jdbc:mysql://%s:%s", datasource.getHost(), datasource.getPort()));
-                pluginConfig.set(PluginKeys.JOB_CONTENT_READER_PARAMETER, pluginConfig.getJsonObject(PluginKeys.JOB_CONTENT_READER_PARAMETER).merge(connectionConfig, true));
+                connectionConfig.set(PluginKeys.JDBC_URL, String.format("jdbc:mysql://%s:%s/%s", datasource.getHost(), datasource.getPort(), readerParameter.getString(PluginKeys.SCHEMA)));
+                pluginConfig.set(PluginKeys.JOB_CONTENT_READER_PARAMETER, readerParameter.merge(connectionConfig, true));
                 pluginConfig.set(PluginKeys.JOB_CONTENT_READER_NAME, PluginKeys.MYSQL_READER);
                 break;
             default:
@@ -63,14 +65,16 @@ public class PluginServiceImpl implements PluginService {
         Assert.notNull(datasource, "datasource must not be null");
         Assert.notNull(pluginConfig, "pluginConfig must not be null");
 
+        JsonObject writerParameter = pluginConfig.getJsonObject(PluginKeys.JOB_CONTENT_WRITER_PARAMETER);
+
         switch (DatasourceEnum.getByValue(datasource.getType())) {
             case MYSQL:
                 JsonObject connectionConfig = JsonObject.newDefault();
                 connectionConfig.set(PluginKeys.USERNAME, datasource.getUsername());
                 connectionConfig.set(PluginKeys.PASSWORD, datasource.getPassword());
                 // TODO: 2021/1/11 jdbcUrl配置考虑开放在数据源管理维护，因为涉及到连接参数的维护
-                connectionConfig.set(PluginKeys.JDBC_URL, String.format("jdbc:mysql://%s:%s", datasource.getHost(), datasource.getPort()));
-                pluginConfig.set(PluginKeys.JOB_CONTENT_WRITER_PARAMETER, pluginConfig.getJsonObject(PluginKeys.JOB_CONTENT_WRITER_PARAMETER).merge(connectionConfig, true));
+                connectionConfig.set(PluginKeys.JDBC_URL, String.format("jdbc:mysql://%s:%s/%s", datasource.getHost(), datasource.getPort(), writerParameter.getString(PluginKeys.SCHEMA)));
+                pluginConfig.set(PluginKeys.JOB_CONTENT_WRITER_PARAMETER, writerParameter.merge(connectionConfig, true));
                 pluginConfig.set(PluginKeys.JOB_CONTENT_WRITER_NAME, PluginKeys.MYSQL_WRITER);
                 break;
             default:
@@ -95,7 +99,7 @@ public class PluginServiceImpl implements PluginService {
             engine.setJobInstanceService(jobInstanceService);
             engine.entry();
         } catch (Throwable e) {
-            log.error("实例运行异常", e);
+            log.error("实例运行异常，实例编号{}", pluginConfig.getInt(CoreConstant.JOB_ID), e);
             JobInstance instance = new JobInstance();
             instance.setId(pluginConfig.getInt(CoreConstant.JOB_ID));
             instance.setStatus(InstanceStatusEnum.ERROR.getValue());

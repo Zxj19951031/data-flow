@@ -11,6 +11,13 @@
         from tb_job_instance
         where id = #{id,jdbcType=INTEGER}
     </select>
+    <select id="selectByJobId" resultType="org.example.job.model.JobInstance">
+        select
+        <include refid="Base_Column_List"/>
+        from tb_job_instance
+        where job_id = #{jobId}
+        order by create_time desc
+    </select>
     <insert id="insert" keyColumn="id" keyProperty="id" parameterType="org.example.job.model.JobInstance"
             useGeneratedKeys="true">
         insert into tb_job_instance (job_id, `status`, start_time,

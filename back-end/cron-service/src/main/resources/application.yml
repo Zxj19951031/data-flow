@@ -43,3 +43,8 @@ eureka:
 feign:
   circuitbreaker:
     enabled: false
+
+security:
+  oauth2:
+    resource:
+      userInfoUri: http://localhost:8084/security/oauth/user

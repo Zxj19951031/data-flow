@@ -22,7 +22,7 @@
         <module>datax-plugin</module>
         <module>job-service</module>
         <module>eureka-service</module>
-an        <module>security-service</module>
+        <module>security-service</module>
     </modules>
 
     <dependencyManagement>
@@ -43,6 +43,12 @@ an        <module>security-service</module>
                 <groupId>com.github.pagehelper</groupId>
                 <artifactId>pagehelper-spring-boot-starter</artifactId>
                 <version>1.3.0</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.auth0</groupId>
+                <artifactId>java-jwt</artifactId>
+                <version>3.4.0</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

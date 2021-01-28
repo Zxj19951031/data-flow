@@ -1,4 +1,9 @@
 const GETAWAY_API = {
+    //登录
+    login:{
+        method:'POST',
+        url:'/authApi/security/login'
+    },
     //新增调度表达式
     saveCron: {
         method: 'POST',
@@ -113,7 +118,7 @@ const GETAWAY_API = {
     getJobInstances: {
         method: 'GET',
         url: '/jobApi/job/{{id}}/instances'
-    }
+    },
 };
 
 export default GETAWAY_API;

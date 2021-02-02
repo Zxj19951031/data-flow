@@ -48,3 +48,9 @@ security:
   oauth2:
     resource:
       userInfoUri: http://localhost:8084/security/oauth/user
+
+logging:
+  level:
+    org:
+      springframework:
+        security: trace

@@ -3,6 +3,7 @@ package org.example.authentication.security;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.DecodedJWT;
+import org.example.authentication.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.core.userdetails.User;
@@ -42,6 +43,9 @@ public class DaoUserDetailService implements UserDetailsService {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+    @Autowired
+    private UserService userService;
+
     /**
      * 通过用户名获取用户信息
      *
@@ -52,9 +56,14 @@ public class DaoUserDetailService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String s) throws UsernameNotFoundException {
 
+        org.example.authentication.model.User user = this.userService.findByUsername(s);
+        if (user == null) {
+            throw new UsernameNotFoundException("用户不存在");
+        }
+
         return User.builder()
-                .username(s)
-                .password(passwordEncoder.encode("123456"))
+                .username(user.getUsername())
+                .password(passwordEncoder.encode(user.getPassword()))
                 .authorities(new ArrayList<>())
                 .build();
     }

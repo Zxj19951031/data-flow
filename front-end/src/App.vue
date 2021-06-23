@@ -1,6 +1,6 @@
 <template>
   <el-container id="body-container">
-    <el-header v-if="this.$route.fullPath!=='/login'">
+    <el-header>
       <el-row type="flex" justify="space-between">
         <!--        logo-->
         <el-col>
@@ -60,7 +60,7 @@ export default {
         url: '',
       }
     }
-  }
+  },
 }
 </script>
 
@@ -113,7 +113,7 @@ body, html {
   border-radius: 0;
 }
 
-.col-tb tr {
+.col-tb tr{
   height: 60px;
 }
 </style>

@@ -12,8 +12,7 @@ public enum SystemError implements IErrorCode {
     ENUM_ERROR(400, "枚举类型异常"),
     NOT_LOGIN(401, "用户未登录"),
     AUTHENTICATE_ERROR(401, "认证失败"),
-    USERNAME_PASSWORD_ERROR(400, "用户名或密码错误"),
-    USERNAME_NOT_FOUND_ERROR(400, "用户不存在"),
+    USERNAME_PASSWORD_ERROR(401, "用户名或密码错误"),
     AUTHORIZE_ERROR(403, "鉴权失败，无权访问的资源"),
     SERVER_ERROR(500, "系统内部异常");
 

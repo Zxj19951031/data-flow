@@ -21,7 +21,7 @@ import java.util.Date;
 @Component
 public class JwtAuthenticationSuccessHandler implements AuthenticationSuccessHandler {
 
-    private static final int tokenRefreshInterval = 10;  //刷新间隔5分钟
+    private static final int tokenRefreshInterval = 300;  //刷新间隔5分钟
 
     @Resource
     private DaoUserDetailService jwtUserService;

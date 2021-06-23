@@ -42,8 +42,3 @@ eureka:
 feign:
   circuitbreaker:
     enabled: false
-
-security:
-  oauth2:
-    client:
-      client-id:

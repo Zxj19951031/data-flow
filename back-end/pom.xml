@@ -22,7 +22,6 @@
         <module>datax-plugin</module>
         <module>job-service</module>
         <module>eureka-service</module>
-an        <module>security-service</module>
     </modules>
 
     <dependencyManagement>

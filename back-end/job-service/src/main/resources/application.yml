@@ -45,5 +45,5 @@ feign:
 
 security:
   oauth2:
-    resource:
-      userInfoUri: http://localhost:8084/security/oauth/user
+    client:
+      client-id:
